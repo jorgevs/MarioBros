@@ -1,0 +1,13 @@
+
+mario_play.png
+size: 406,1507
+format: RGBA8888
+filter: Nearest,Nearest
+repeat: none
+mario
+  rotate: false
+  xy: 216, 243
+  size: 14, 27
+  orig: 14, 27
+  offset: 0, 0
+  index: -1
