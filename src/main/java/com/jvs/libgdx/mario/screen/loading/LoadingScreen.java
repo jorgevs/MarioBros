@@ -12,7 +12,6 @@ import com.jvs.libgdx.mario.config.GameConfig;
 import com.jvs.libgdx.mario.screen.game.GameScreen;
 import com.jvs.libgdx.mario.utils.GdxUtils;
 
-
 public class LoadingScreen extends ScreenAdapter {
 
     private final MarioGame marioGame;
@@ -38,7 +37,7 @@ public class LoadingScreen extends ScreenAdapter {
     @Override
     public void show() {
         camera = new OrthographicCamera();
-        viewport = new FillViewport(GameConfig.HUD_WIDTH, GameConfig.HUD_HEIGHT, camera);
+        viewport = new FillViewport(GameConfig.WIDTH, GameConfig.HEIGHT, camera);
         shapeRenderer = new ShapeRenderer();
 
         assetManager.load(AssetDescriptors.MARIO_ATLAS);

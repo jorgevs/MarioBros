@@ -32,10 +32,10 @@ public class GameController extends InputAdapter {
     public void update(float deltaTime) {
 
         if (Gdx.input.isKeyPressed(Input.Keys.RIGHT)) {
-            player.setX(player.getX()+10);
+            //player.setX(player.getX()+10);
         }
         if (Gdx.input.isKeyPressed(Input.Keys.LEFT)) {
-            player.setX(player.getX()-10);
+            //player.setX(player.getX()-10);
         }
     }
 

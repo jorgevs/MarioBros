@@ -3,15 +3,16 @@ package com.jvs.libgdx.mario.screen.game;
 import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
+import com.badlogic.gdx.maps.tiled.TiledMap;
+import com.badlogic.gdx.maps.tiled.TmxMapLoader;
+import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
 import com.badlogic.gdx.utils.Disposable;
 import com.badlogic.gdx.utils.Logger;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
-import com.jvs.libgdx.mario.assets.AssetDescriptors;
-import com.jvs.libgdx.mario.assets.RegionNames;
+import com.jvs.libgdx.mario.assets.AssetPaths;
 import com.jvs.libgdx.mario.config.GameConfig;
 import com.jvs.libgdx.mario.entity.Background;
 import com.jvs.libgdx.mario.entity.Player;
@@ -23,14 +24,16 @@ import com.jvs.libgdx.mario.utils.debug.DebugCameraController;
 public class GameRenderer implements Disposable {
     private static final Logger LOGGER = new Logger(GameRenderer.class.getName(), Logger.DEBUG);
 
-    private OrthographicCamera camera;
-    private Viewport viewport;
-    private ShapeRenderer shapeRenderer;
-
-
     private final GameController gameController;
     private final AssetManager assetManager;
     private final SpriteBatch spriteBatch;
+
+    private Viewport viewport;
+    private ShapeRenderer shapeRenderer;
+
+    private TmxMapLoader tmxMapLoader;
+    private TiledMap tiledMap;
+    private OrthogonalTiledMapRenderer orthogonalTiledMapRenderer;
 
     private TextureRegion playerRegion;
     private TextureRegion backgroundRegion;
@@ -45,42 +48,50 @@ public class GameRenderer implements Disposable {
     }
 
     private void init() {
-        camera = new OrthographicCamera();
-        viewport = new FitViewport(GameConfig.WORLD_WIDTH, GameConfig.WORLD_HEIGHT, camera);
+        viewport = new FitViewport(GameConfig.WORLD_WIDTH, GameConfig.WORLD_HEIGHT);
         shapeRenderer = new ShapeRenderer();
 
-        TextureAtlas playerAtlas = assetManager.get(AssetDescriptors.MARIO_ATLAS);
-        playerRegion = playerAtlas.findRegion(RegionNames.MARIO);
+        //TextureAtlas playerAtlas = assetManager.get(AssetDescriptors.MARIO_ATLAS);
+        //playerRegion = playerAtlas.findRegion(RegionNames.MARIO);
 
-        TextureAtlas backgroundAtlas = assetManager.get(AssetDescriptors.WORLD_11_ATLAS);
-        backgroundRegion = backgroundAtlas.findRegion(RegionNames.BACKGROUND);
+        //TextureAtlas backgroundAtlas = assetManager.get(AssetDescriptors.WORLD_11_ATLAS);
+        //backgroundRegion = backgroundAtlas.findRegion(RegionNames.BACKGROUND);
 
 
         debugCameraController = new DebugCameraController();
         debugCameraController.setStartPosition(GameConfig.WORLD_CENTER_X, GameConfig.WORLD_CENTER_Y);
-    }
 
-    public void render(float deltaTime) {
-        // update camera (is not wrapped inside the alive conditions, because we
-        // want to be able to control the camera even when the game is over)
-        debugCameraController.handleDebugInput(deltaTime);
-        debugCameraController.applyTo(camera);
+        tmxMapLoader = new TmxMapLoader();
+        tiledMap = tmxMapLoader.load(AssetPaths.MarioTileMap);
+        orthogonalTiledMapRenderer = new OrthogonalTiledMapRenderer(tiledMap);
 
-        // clear screen
-        GdxUtils.clearScreen();
-
-        // render game characters
-        renderGamePlay();
-
-        // render debug graphics
-        //renderDebug();
+        //initially set the camera to be centered correctly at startup
+        //viewport.getCamera().position.set(viewport.getWorldWidth()/2, viewport.getWorldHeight()/2, 0);
+        //viewport.apply(true);
     }
 
     public void resize(int width, int height) {
         // NOTE:  Not centering camera for this sample
-        viewport.update(width, height, true);
+        viewport.update(width, height);
 
+        // prints xPPU and yPPU after resizing
         ViewportUtils.debugPixelPerUnit(viewport);
+    }
+
+    public void render(float deltaTime) {
+        // clear screen
+        GdxUtils.clearScreen();
+
+        // render game characters
+        renderGamePlay2();
+
+        // update camera (is not wrapped inside the alive conditions, because we
+        // want to be able to control the camera even when the game is over)
+        debugCameraController.handleDebugInput(deltaTime);
+        debugCameraController.applyTo((OrthographicCamera) viewport.getCamera());
+
+        // render debug graphics
+        //renderDebug();
     }
 
     @Override
@@ -90,10 +101,22 @@ public class GameRenderer implements Disposable {
 
     private void renderGamePlay() {
         viewport.apply(); // important! Apply the viewport before rendering
-        spriteBatch.setProjectionMatrix(camera.combined);
+        spriteBatch.setProjectionMatrix(viewport.getCamera().combined);
 
         spriteBatch.begin();
         drawCharacters();
+        spriteBatch.end();
+    }
+
+    private void renderGamePlay2() {
+        viewport.apply(); // important! Apply the viewport before rendering
+        spriteBatch.setProjectionMatrix(viewport.getCamera().combined);
+
+        orthogonalTiledMapRenderer.setView((OrthographicCamera)viewport.getCamera());
+        orthogonalTiledMapRenderer.render();
+
+        spriteBatch.begin();
+        // render something...
         spriteBatch.end();
     }
 
@@ -108,8 +131,8 @@ public class GameRenderer implements Disposable {
     }
 
      private void renderDebug() {
-        viewport.apply(); // important! Apply the viewport before rendering
-        shapeRenderer.setProjectionMatrix(camera.combined);
+        //viewport.apply(); // important! Apply the viewport before rendering
+        //shapeRenderer.setProjectionMatrix(viewport.getCamera().combined);
 
         shapeRenderer.begin(ShapeRenderer.ShapeType.Line);
         drawDebug();
