@@ -19,7 +19,7 @@ public class GameScreen extends ScreenAdapter {
 
     @Override
     public void show() {
-        gameController = new GameController();
+        gameController = new GameController(marioGame);
         gameRenderer = new GameRenderer(gameController, marioGame.getAssetManager(), marioGame.getSpriteBatch());
     }
 

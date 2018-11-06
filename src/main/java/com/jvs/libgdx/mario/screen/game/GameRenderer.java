@@ -97,6 +97,7 @@ public class GameRenderer implements Disposable {
     @Override
     public void dispose() {
         shapeRenderer.dispose();
+        gameController.getHud().dispose();
     }
 
     private void renderGamePlay() {
@@ -118,6 +119,9 @@ public class GameRenderer implements Disposable {
         spriteBatch.begin();
         // render something...
         spriteBatch.end();
+
+        // render the Hud
+        gameController.getHud().getStage().draw();
     }
 
     private void drawCharacters() {
