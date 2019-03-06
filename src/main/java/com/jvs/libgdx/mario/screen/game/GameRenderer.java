@@ -60,23 +60,29 @@ public class GameRenderer implements Disposable {
 
     private void init() {
         viewport = new FitViewport(GameConfig.WORLD_WIDTH, GameConfig.WORLD_HEIGHT);
+
+        // Shape renderer used to draw the debug grid
         shapeRenderer = new ShapeRenderer();
 
+        // Player region
         playerAtlas = assetManager.get(AssetDescriptors.MARIO_ATLAS_DESC);
         playerRegion = playerAtlas.findRegion(RegionNames.MARIO);
 
-        debugCameraController = new DebugCameraController();
-        debugCameraController.setStartPosition(GameConfig.WORLD_CENTER_X, GameConfig.WORLD_CENTER_Y);
-
+        // Tiled map
         tiledMap = assetManager.get(AssetDescriptors.MARIO_TILE_MAP_DESC);
-
         float unitScale = 1 / 1f;
         orthogonalTiledMapRenderer = new OrthogonalTiledMapRenderer(tiledMap, unitScale);
 
+        // Debug camera controller to monitor our game
+        debugCameraController = new DebugCameraController();
+        debugCameraController.setStartPosition(GameConfig.WORLD_CENTER_X, GameConfig.WORLD_CENTER_Y);
+
         // Box2D world creation
         world = new World(new Vector2(0, -10), true);
+        // Box2D debug renderer (used to display the body shapes in our Box2D world)
         box2DDebugRenderer = new Box2DDebugRenderer();
 
+        // Create static bodies in our world that are defined in the tiled map layers
         createStaticBodies(tiledMap);
     }
 
@@ -130,7 +136,7 @@ public class GameRenderer implements Disposable {
         // NOTE:  Not centering camera for this sample
         viewport.update(width, height);
 
-        // prints xPPU and yPPU after resizing
+        // prints in the LOGGER the xPPU and yPPU values after resizing
         ViewportUtils.debugPixelPerUnit(viewport);
     }
 
@@ -145,20 +151,11 @@ public class GameRenderer implements Disposable {
         // render game characters
         renderGamePlay();
 
-        // render the object debugging lines in our Box2D world (Box2DDebugLines)
-        box2DDebugRenderer.render(world, viewport.getCamera().combined);
-
         // take 1 step in the physics simulation(60 times per second)
         world.step(1 / 60f, 6, 2);
 
-
-        // update camera (is not wrapped inside the alive conditions, because we
-        // want to be able to control the camera even when the game is over)
-        debugCameraController.handleDebugInput(deltaTime);
-        debugCameraController.applyTo((OrthographicCamera) viewport.getCamera());
-
         // render debug graphics
-        renderDebug();
+        renderDebug(deltaTime);
     }
 
     @Override
@@ -188,15 +185,31 @@ public class GameRenderer implements Disposable {
         spriteBatch.draw(playerRegion, player.getX(), player.getY(), player.getWidth(), player.getHeight());
     }
 
-    private void renderDebug() {
+    // ================================== DEBUGGING ==================================
+
+    private void renderDebug(float deltaTime) {
+        //------------------------------ 2DBox world ---------------------------------
+        // render the object debugging lines in our Box2D world (Box2DDebugLines)
+        box2DDebugRenderer.render(world, viewport.getCamera().combined);
+
+        //------------------------------ Debug camera --------------------------------
+        // update camera (is not wrapped inside the alive conditions, because we
+        // want to be able to control the camera even when the game is over)
+        debugCameraController.handleDebugInput(deltaTime);
+        debugCameraController.applyTo((OrthographicCamera) viewport.getCamera());
+
+        //----------------------- Debug entities shape and grid -----------------------
         viewport.apply(); // important! Apply the viewport before rendering
         shapeRenderer.setProjectionMatrix(viewport.getCamera().combined);
 
+        // Draws any entity's shape
         shapeRenderer.begin(ShapeRenderer.ShapeType.Line);
         drawDebug();
         shapeRenderer.end();
 
-        //ViewportUtils.drawGrid(viewport, shapeRenderer);
+        // Uses the same shapeRenderer to draw the grid
+        ViewportUtils.drawGrid(viewport, shapeRenderer);
+        //----------------------------------------------------------------------------
     }
 
     private void drawDebug() {
