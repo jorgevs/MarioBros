@@ -2,19 +2,17 @@ package com.jvs.libgdx.mario.entity;
 
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Circle;
+import com.badlogic.gdx.math.Rectangle;
 
 public abstract class GameObjectBase {
-
     private float x;
     private float y;
-
     private float width;
     private float height;
+    private Rectangle bounds;
 
-    private Circle bounds;
-
-    public GameObjectBase(float boundsRadius) {
-        bounds = new Circle(x, y, boundsRadius);
+    public GameObjectBase(float width, float height) {
+        bounds = new Rectangle(x, y, width, height);
     }
 
     public float getX() {
@@ -43,12 +41,12 @@ public abstract class GameObjectBase {
         return height;
     }
 
-    public Circle getBounds() {
+    public Rectangle getBounds() {
         return bounds;
     }
 
     public void drawDebug(ShapeRenderer renderer) {
-        renderer.circle(bounds.x, bounds.y, bounds.radius, 30);
+        renderer.rect(bounds.x, bounds.y, bounds.width, bounds.height);
     }
 
     public void setSize(float width, float height) {
@@ -64,10 +62,11 @@ public abstract class GameObjectBase {
     }
 
     private void updateBounds() {
-        float halfWidth = getWidth()/2f;
-        float halfHeight = getHeight()/2f;
+        float halfWidth = getWidth() / 2f;
+        float halfHeight = getHeight() / 2f;
         // draw the object according to sprite position (left-bottom corner)
-        bounds.setPosition(x + halfWidth, y + halfHeight);
+        //bounds.setPosition(x + halfWidth, y + halfHeight);
+        bounds.setPosition(x, y);
     }
 
 }

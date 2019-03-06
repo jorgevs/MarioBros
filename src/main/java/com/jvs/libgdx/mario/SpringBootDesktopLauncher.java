@@ -15,7 +15,7 @@ public class SpringBootDesktopLauncher implements CommandLineRunner {
     private static final Logger LOGGER = new Logger(SpringBootDesktopLauncher.class.getName(), Logger.DEBUG);
 
     @Override
-    public void run(String... args) throws Exception {
+    public void run(String... args) {
         System.out.println("Starting MarioGame...");
 
         LwjglApplicationConfiguration config = new LwjglApplicationConfiguration();

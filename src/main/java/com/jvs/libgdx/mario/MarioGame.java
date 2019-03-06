@@ -28,7 +28,7 @@ public class MarioGame extends Game {
     @Override
     public void dispose() {
         // dispose the actual com.mygdx.obstacleavoid.screen object
-        getScreen().dispose(); // Important!
+        this.getScreen().dispose(); // Important!
 
         assetManager.dispose();
         spriteBatch.dispose();
@@ -41,5 +41,4 @@ public class MarioGame extends Game {
     public SpriteBatch getSpriteBatch(){
         return spriteBatch;
     }
-
 }

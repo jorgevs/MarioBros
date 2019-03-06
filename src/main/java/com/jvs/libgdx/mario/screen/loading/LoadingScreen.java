@@ -2,8 +2,11 @@ package com.jvs.libgdx.mario.screen.loading;
 
 import com.badlogic.gdx.ScreenAdapter;
 import com.badlogic.gdx.assets.AssetManager;
+import com.badlogic.gdx.assets.loaders.resolvers.InternalFileHandleResolver;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
+import com.badlogic.gdx.maps.tiled.TiledMap;
+import com.badlogic.gdx.maps.tiled.TmxMapLoader;
 import com.badlogic.gdx.utils.viewport.FillViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 import com.jvs.libgdx.mario.MarioGame;
@@ -31,7 +34,7 @@ public class LoadingScreen extends ScreenAdapter {
 
     public LoadingScreen(MarioGame marioGame) {
         this.marioGame = marioGame;
-        assetManager = marioGame.getAssetManager();
+        this.assetManager = marioGame.getAssetManager();
     }
 
     @Override
@@ -40,9 +43,11 @@ public class LoadingScreen extends ScreenAdapter {
         viewport = new FillViewport(GameConfig.WIDTH, GameConfig.HEIGHT, camera);
         shapeRenderer = new ShapeRenderer();
 
-        assetManager.load(AssetDescriptors.MARIO_ATLAS);
-        assetManager.load(AssetDescriptors.WORLD_11_ATLAS);
-        assetManager.load(AssetDescriptors.HIT_SOUND);
+        assetManager.load(AssetDescriptors.MARIO_ATLAS_DESC);
+        assetManager.load(AssetDescriptors.HIT_SOUND_DESC);
+
+        assetManager.setLoader(TiledMap.class, new TmxMapLoader(new InternalFileHandleResolver()));
+        assetManager.load(AssetDescriptors.MARIO_TILE_MAP_DESC);
     }
 
     @Override

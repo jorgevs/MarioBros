@@ -1,16 +1,19 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <map version="1.2" tiledversion="1.2.0" orientation="orthogonal" renderorder="right-down" width="240" height="13" tilewidth="16" tileheight="16" infinite="0" nextlayerid="9" nextobjectid="107">
  <tileset firstgid="1" source="MarioTileset.tsx"/>
+
  <layer id="2" name="Background" width="240" height="13">
   <data encoding="base64" compression="zlib">
    eJztwzEJAAAMA7Ay/4bqrir2JZBeUlVVVVVVVVVVVVVV1ccDxULniQ==
   </data>
  </layer>
+
  <layer id="1" name="Graphics" width="240" height="13">
   <data encoding="base64" compression="zlib">
    eJztmM1qwzAMx91SBtut6Wm3kuN2a5cV9p7r3mTd480GG4SQEtux/NH6ByKHppH0l2Q7UapTki/GOp175Hur1FXbz7Z0JPUDtSqpW07fzldqf1I5wHivCWKvpeYcvzqWm7Y/IR0lc5XqLQ6olZRuoXHk8pXan1QOMN5bgtgla17jeuDI0WNUb5nLzl6hObj1uVYdY5nLM3euNfdpSUruAWsoWU9ufc6pY44z2Vyea3MN/a7Qap92aB69nrWcw2NxZ5pdRp+j6vv4PYHPx9x5uVb6N3J/RmstrnVz4J59VW30bqfjywisk5ZhUzoCeVrc21uE6qVRtTe/zzqPl5m5wL3kvrVCpOYK7vF77eOs7RDhC58XfGZiSReKmteXGA2WCNEoRBvunJdqLaN6Cc9u7fPrtH/T9r6i73zmyvfdC/YDrLfxcbJ+PiJnOBSni2+PrllfOFK8o0js4aG9I6FNCEu9RM1uzvk92viekM3htIc1oP5vnn1kdOfmatLXT2AXz7q5WGC9oY8z4YuLLTYGHAvu0Yl4HqXDYA3qSdVp8owR54MtND8fqFwNnDaYYZN27eXiMXC9vwd+qV7iZpeaX6oGMBYuPtyj8D7zU4uGSfm8FPc9gpXWorT/Guwff9CDAA==
   </data>
  </layer>
+
  <objectgroup id="4" name="Ground">
   <object id="1" x="0" y="192" width="736" height="16"/>
   <object id="2" x="800" y="192" width="256" height="16"/>
