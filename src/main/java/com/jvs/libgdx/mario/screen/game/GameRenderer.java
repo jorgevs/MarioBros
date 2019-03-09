@@ -1,8 +1,6 @@
 package com.jvs.libgdx.mario.screen.game;
 
-import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.graphics.OrthographicCamera;
-import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
@@ -14,9 +12,9 @@ import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.*;
 import com.badlogic.gdx.utils.Disposable;
-import com.badlogic.gdx.utils.Logger;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
+import com.jvs.libgdx.mario.MarioGame;
 import com.jvs.libgdx.mario.assets.AssetDescriptors;
 import com.jvs.libgdx.mario.assets.RegionNames;
 import com.jvs.libgdx.mario.config.GameConfig;
@@ -26,15 +24,13 @@ import com.jvs.libgdx.mario.utils.ViewportUtils;
 import com.jvs.libgdx.mario.utils.debug.DebugCameraController;
 
 public class GameRenderer implements Disposable {
-    private static final Logger LOGGER = new Logger(GameRenderer.class.getName(), Logger.DEBUG);
+
+    private final MarioGame marioGame;
 
     private final GameController gameController;
 
-    private final AssetManager assetManager;
-    private final SpriteBatch spriteBatch;
-
-
     private Viewport viewport;
+
     private ShapeRenderer shapeRenderer;
 
     // Tiled map variables
@@ -51,10 +47,9 @@ public class GameRenderer implements Disposable {
     private DebugCameraController debugCameraController;
 
 
-    public GameRenderer(GameController gameController, AssetManager assetManager, SpriteBatch spriteBatch) {
+    public GameRenderer(MarioGame marioGame, GameController gameController) {
+        this.marioGame = marioGame;
         this.gameController = gameController;
-        this.assetManager = assetManager;
-        this.spriteBatch = spriteBatch;
         init();
     }
 
@@ -65,11 +60,11 @@ public class GameRenderer implements Disposable {
         shapeRenderer = new ShapeRenderer();
 
         // Player region
-        playerAtlas = assetManager.get(AssetDescriptors.MARIO_ATLAS_DESC);
+        playerAtlas = marioGame.getAssetManager().get(AssetDescriptors.MARIO_ATLAS_DESC);
         playerRegion = playerAtlas.findRegion(RegionNames.MARIO);
 
         // Tiled map
-        tiledMap = assetManager.get(AssetDescriptors.MARIO_TILE_MAP_DESC);
+        tiledMap = marioGame.getAssetManager().get(AssetDescriptors.MARIO_TILE_MAP_DESC);
         float unitScale = 1 / 1f;
         orthogonalTiledMapRenderer = new OrthogonalTiledMapRenderer(tiledMap, unitScale);
 
@@ -84,6 +79,11 @@ public class GameRenderer implements Disposable {
 
         // Create static bodies in our world that are defined in the tiled map layers
         createStaticBodies(tiledMap);
+
+        // Define Box2D player's body
+        gameController.getPlayer().defineBodyPlayer(world);
+        //Player player = gameController.getPlayer();
+        //player.setB2body(createDynamicBody(player));
     }
 
     private void createStaticBodies(TiledMap tiledMap) {
@@ -154,6 +154,10 @@ public class GameRenderer implements Disposable {
         // take 1 step in the physics simulation(60 times per second)
         world.step(1 / 60f, 6, 2);
 
+        //attach our gamecam to our players.x coordinate
+        viewport.getCamera().position.x = gameController.getPlayer().getB2body().getPosition().x;
+        viewport.getCamera().position.y = GameConfig.WORLD_HEIGHT/2;
+
         // render debug graphics
         renderDebug(deltaTime);
     }
@@ -169,11 +173,11 @@ public class GameRenderer implements Disposable {
 
     private void renderGamePlay() {
         //viewport.apply(); // important! Apply the viewport before rendering
-        spriteBatch.setProjectionMatrix(viewport.getCamera().combined);
+        marioGame.getSpriteBatch().setProjectionMatrix(viewport.getCamera().combined);
 
-        spriteBatch.begin();
+        marioGame.getSpriteBatch().begin();
         drawCharacters();
-        spriteBatch.end();
+        marioGame.getSpriteBatch().end();
 
         // render the Hud
         gameController.getHud().getStage().draw();
@@ -182,8 +186,11 @@ public class GameRenderer implements Disposable {
     private void drawCharacters() {
         // draw player
         Player player = gameController.getPlayer();
-        spriteBatch.draw(playerRegion, player.getX(), player.getY(), player.getWidth(), player.getHeight());
+        marioGame.getSpriteBatch().draw(playerRegion, player.getX(), player.getY(), player.getWidth(), player.getHeight());
+
+        player.setPosition(player.getB2body().getPosition().x - player.getWidth() / 2, player.getB2body().getPosition().y - player.getHeight() / 2);
     }
+
 
     // ================================== DEBUGGING ==================================
 
@@ -195,8 +202,8 @@ public class GameRenderer implements Disposable {
         //------------------------------ Debug camera --------------------------------
         // update camera (is not wrapped inside the alive conditions, because we
         // want to be able to control the camera even when the game is over)
-        debugCameraController.handleDebugInput(deltaTime);
-        debugCameraController.applyTo((OrthographicCamera) viewport.getCamera());
+        //debugCameraController.handleDebugInput(deltaTime);
+        //debugCameraController.applyTo((OrthographicCamera) viewport.getCamera());
 
         //----------------------- Debug entities shape and grid -----------------------
         viewport.apply(); // important! Apply the viewport before rendering
@@ -208,7 +215,7 @@ public class GameRenderer implements Disposable {
         shapeRenderer.end();
 
         // Uses the same shapeRenderer to draw the grid
-        ViewportUtils.drawGrid(viewport, shapeRenderer);
+        //ViewportUtils.drawGrid(viewport, shapeRenderer);
         //----------------------------------------------------------------------------
     }
 

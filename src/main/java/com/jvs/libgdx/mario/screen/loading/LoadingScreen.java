@@ -18,12 +18,10 @@ import com.jvs.libgdx.mario.utils.GdxUtils;
 public class LoadingScreen extends ScreenAdapter {
 
     private final MarioGame marioGame;
-    private final AssetManager assetManager;
 
     private static final float PROGRESS_BAR_WIDTH = GameConfig.HUD_WIDTH / 2f; // world units
     private static final float PROGRESS_BAR_HEIGHT = 60; // world units
 
-    private OrthographicCamera camera;
     private Viewport viewport;
     private ShapeRenderer shapeRenderer;
 
@@ -34,20 +32,18 @@ public class LoadingScreen extends ScreenAdapter {
 
     public LoadingScreen(MarioGame marioGame) {
         this.marioGame = marioGame;
-        this.assetManager = marioGame.getAssetManager();
     }
 
     @Override
     public void show() {
-        camera = new OrthographicCamera();
-        viewport = new FillViewport(GameConfig.WIDTH, GameConfig.HEIGHT, camera);
+        viewport = new FillViewport(GameConfig.WIDTH, GameConfig.HEIGHT);
         shapeRenderer = new ShapeRenderer();
 
-        assetManager.load(AssetDescriptors.MARIO_ATLAS_DESC);
-        assetManager.load(AssetDescriptors.HIT_SOUND_DESC);
+        marioGame.getAssetManager().load(AssetDescriptors.MARIO_ATLAS_DESC);
+        marioGame.getAssetManager().load(AssetDescriptors.HIT_SOUND_DESC);
 
-        assetManager.setLoader(TiledMap.class, new TmxMapLoader(new InternalFileHandleResolver()));
-        assetManager.load(AssetDescriptors.MARIO_TILE_MAP_DESC);
+        marioGame.getAssetManager().setLoader(TiledMap.class, new TmxMapLoader(new InternalFileHandleResolver()));
+        marioGame.getAssetManager().load(AssetDescriptors.MARIO_TILE_MAP_DESC);
     }
 
     @Override
@@ -55,7 +51,7 @@ public class LoadingScreen extends ScreenAdapter {
         GdxUtils.clearScreen();
         update(delta);
 
-        shapeRenderer.setProjectionMatrix(camera.combined);
+        //shapeRenderer.setProjectionMatrix(viewport.getCamera().combined);
         shapeRenderer.begin(ShapeRenderer.ShapeType.Filled);
         draw();
         shapeRenderer.end();
@@ -67,10 +63,10 @@ public class LoadingScreen extends ScreenAdapter {
 
     private void update(float delta){
         // progress is between 0 and 1
-        progress = assetManager.getProgress();
+        progress = marioGame.getAssetManager().getProgress();
 
         // update() returns true when all the assets are loaded
-        if(assetManager.update()){
+        if(marioGame.getAssetManager().update()){
             waitTime -= delta;
 
             if(waitTime <= 0){

@@ -14,6 +14,8 @@ public class GameConfig {
     public static final float WORLD_WIDTH = WIDTH / 3f; // world units (400.0f)
     public static final float WORLD_HEIGHT = HEIGHT / 3f; // world units (208.0f)
 
+    //public static final float PPM = 100;
+
     public static final float WORLD_CENTER_X = WORLD_WIDTH / 2; // world units (200.0f)
     public static final float WORLD_CENTER_Y = WORLD_HEIGHT / 2; // world units (104.0f)
 

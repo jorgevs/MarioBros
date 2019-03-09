@@ -3,6 +3,7 @@ package com.jvs.libgdx.mario.entity;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Circle;
 import com.badlogic.gdx.math.Rectangle;
+import com.badlogic.gdx.physics.box2d.Body;
 
 public abstract class GameObjectBase {
     private float x;
@@ -10,6 +11,7 @@ public abstract class GameObjectBase {
     private float width;
     private float height;
     private Rectangle bounds;
+    protected Body b2body;
 
     public GameObjectBase(float width, float height) {
         bounds = new Rectangle(x, y, width, height);
@@ -45,6 +47,14 @@ public abstract class GameObjectBase {
         return bounds;
     }
 
+    public Body getB2body() {
+        return b2body;
+    }
+
+    public void setB2body(Body b2body) {
+        this.b2body = b2body;
+    }
+
     public void drawDebug(ShapeRenderer renderer) {
         renderer.rect(bounds.x, bounds.y, bounds.width, bounds.height);
     }
@@ -57,7 +67,6 @@ public abstract class GameObjectBase {
     public void setPosition(float x, float y) {
         this.x = x;
         this.y = y;
-
         updateBounds();
     }
 
@@ -68,5 +77,7 @@ public abstract class GameObjectBase {
         //bounds.setPosition(x + halfWidth, y + halfHeight);
         bounds.setPosition(x, y);
     }
+
+    public abstract void update(float deltaTime);
 
 }
