@@ -5,10 +5,7 @@ import com.badlogic.gdx.Input;
 import com.badlogic.gdx.InputAdapter;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Disposable;
-import com.badlogic.gdx.utils.Logger;
 import com.jvs.libgdx.mario.MarioGame;
-import com.jvs.libgdx.mario.config.GameConfig;
-import com.jvs.libgdx.mario.entity.Background;
 import com.jvs.libgdx.mario.entity.Player;
 import com.jvs.libgdx.mario.screen.scenes.Hud;
 
@@ -24,29 +21,37 @@ public class GameController extends InputAdapter implements Disposable {
         init();
     }
 
-    private void init(){
+    private void init() {
         //Gdx.input.setInputProcessor(this);
 
         player = new Player();
-        player.setPosition(0, 16);
+        player.setPosition(0, 10);
 
         hud = new Hud(marioGame.getSpriteBatch());
 
     }
 
+    private static final float IMPULSE_HRTL = 12.0f;
+    private static final float IMPULSE_VRTL = 100.0f;
     public void update(float deltaTime) {
 
         if (Gdx.input.isKeyPressed(Input.Keys.RIGHT)) {
-            player.getB2body().applyLinearImpulse(new Vector2(3500.1f, 0), player.getB2body().getWorldCenter(), true);
+            player.getB2body().applyLinearImpulse(new Vector2(IMPULSE_HRTL, 0), player.getB2body().getWorldCenter(), true);
         }
         if (Gdx.input.isKeyPressed(Input.Keys.LEFT)) {
-            player.getB2body().applyLinearImpulse(new Vector2(-3500.1f, 0), player.getB2body().getWorldCenter(), true);
+            player.getB2body().applyLinearImpulse(new Vector2(-IMPULSE_HRTL, 0), player.getB2body().getWorldCenter(), true);
         }
 
-        /*if (Gdx.input.isKeyPressed(Input.Keys.UP)) {
-            player.setY(player.getY()+2);
+        if (Gdx.input.isKeyPressed(Input.Keys.SPACE)) {
+            //public void jump(){
+                //if ( currentState != State.JUMPING ) {
+            player.getB2body().applyLinearImpulse(new Vector2(0, IMPULSE_VRTL), player.getB2body().getWorldCenter(), true);
+                    //currentState = State.JUMPING;
+                //}
+            //}
         }
-        if (Gdx.input.isKeyPressed(Input.Keys.DOWN)) {
+
+        /*if (Gdx.input.isKeyPressed(Input.Keys.DOWN)) {
             player.setY(player.getY()-2);
         }*/
 

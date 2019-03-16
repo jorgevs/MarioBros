@@ -19,8 +19,8 @@ public class LoadingScreen extends ScreenAdapter {
 
     private final MarioGame marioGame;
 
-    private static final float PROGRESS_BAR_WIDTH = GameConfig.HUD_WIDTH / 2f; // world units
-    private static final float PROGRESS_BAR_HEIGHT = 60; // world units
+    private static final float PROGRESS_BAR_WIDTH = GameConfig.WORLD_WIDTH / 2f; // world units
+    private static final float PROGRESS_BAR_HEIGHT = 2; // world units
 
     private Viewport viewport;
     private ShapeRenderer shapeRenderer;
@@ -36,7 +36,7 @@ public class LoadingScreen extends ScreenAdapter {
 
     @Override
     public void show() {
-        viewport = new FillViewport(GameConfig.WIDTH, GameConfig.HEIGHT);
+        viewport = new FillViewport(GameConfig.WORLD_WIDTH, GameConfig.WORLD_HEIGHT);
         shapeRenderer = new ShapeRenderer();
 
         marioGame.getAssetManager().load(AssetDescriptors.MARIO_ATLAS_DESC);
@@ -51,7 +51,7 @@ public class LoadingScreen extends ScreenAdapter {
         GdxUtils.clearScreen();
         update(delta);
 
-        //shapeRenderer.setProjectionMatrix(viewport.getCamera().combined);
+        shapeRenderer.setProjectionMatrix(viewport.getCamera().combined);
         shapeRenderer.begin(ShapeRenderer.ShapeType.Filled);
         draw();
         shapeRenderer.end();
@@ -76,8 +76,8 @@ public class LoadingScreen extends ScreenAdapter {
     }
 
     private void draw(){
-        float progressBarX = (GameConfig.HUD_WIDTH - PROGRESS_BAR_WIDTH) / 2;
-        float progressBarY = (GameConfig.HUD_HEIGHT - PROGRESS_BAR_HEIGHT) / 2;
+        float progressBarX = (GameConfig.WORLD_WIDTH - PROGRESS_BAR_WIDTH) / 2;
+        float progressBarY = (GameConfig.WORLD_HEIGHT - PROGRESS_BAR_HEIGHT) / 2;
 
         shapeRenderer.rect(progressBarX, progressBarY, PROGRESS_BAR_WIDTH * progress, PROGRESS_BAR_HEIGHT);
     }

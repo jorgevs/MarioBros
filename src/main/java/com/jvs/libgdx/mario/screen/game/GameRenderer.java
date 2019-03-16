@@ -65,7 +65,7 @@ public class GameRenderer implements Disposable {
 
         // Tiled map
         tiledMap = marioGame.getAssetManager().get(AssetDescriptors.MARIO_TILE_MAP_DESC);
-        float unitScale = 1 / 1f;
+        float unitScale = 1/16f;
         orthogonalTiledMapRenderer = new OrthogonalTiledMapRenderer(tiledMap, unitScale);
 
         // Debug camera controller to monitor our game
@@ -73,7 +73,7 @@ public class GameRenderer implements Disposable {
         debugCameraController.setStartPosition(GameConfig.WORLD_CENTER_X, GameConfig.WORLD_CENTER_Y);
 
         // Box2D world creation
-        world = new World(new Vector2(0, -10), true);
+        world = new World(new Vector2(0, -70), true);
         // Box2D debug renderer (used to display the body shapes in our Box2D world)
         box2DDebugRenderer = new Box2DDebugRenderer();
 
@@ -88,7 +88,7 @@ public class GameRenderer implements Disposable {
 
     private void createStaticBodies(TiledMap tiledMap) {
         String[] layerList = {"Background", "Coins", "Ground", "Pipes", "Powers", "Bricks", "SecretBox"};
-        for (String layer: layerList) {
+        for (String layer : layerList) {
             for (MapObject mapObject : tiledMap.getLayers().get(layer).getObjects().getByType(RectangleMapObject.class)) {
                 createStaticBody(mapObject);
             }
@@ -107,14 +107,14 @@ public class GameRenderer implements Disposable {
 
         // Set our body's starting position in the world
         Rectangle rect = ((RectangleMapObject) mapObject).getRectangle();
-        bodyDef.position.set(rect.getX() + rect.getWidth() / 2, rect.getY() + rect.getHeight() / 2);
+        bodyDef.position.set((rect.getX() + rect.getWidth() / 2) / GameConfig.GAME_SCALE, (rect.getY() + rect.getHeight() / 2) / GameConfig.GAME_SCALE);
 
         // Create our body in the world using the body definition
         Body body = world.createBody(bodyDef);
 
         // Define the shape for the fixture
         PolygonShape polygonShape = new PolygonShape();
-        polygonShape.setAsBox(rect.getWidth() / 2, rect.getHeight() / 2);
+        polygonShape.setAsBox((rect.getWidth() / 2) / GameConfig.GAME_SCALE, (rect.getHeight() / 2) / GameConfig.GAME_SCALE);
 
         // Create a fixture definition to apply our shape to.
         // A fixture has a shape, density, friction and restitution attached to it.
@@ -146,6 +146,7 @@ public class GameRenderer implements Disposable {
 
         // render our game tiled map
         orthogonalTiledMapRenderer.setView((OrthographicCamera) viewport.getCamera());
+        //orthogonalTiledMapRenderer.getBatch().setProjectionMatrix(viewport.getCamera().combined);
         orthogonalTiledMapRenderer.render();
 
         // render game characters
@@ -156,7 +157,7 @@ public class GameRenderer implements Disposable {
 
         //attach our gamecam to our players.x coordinate
         viewport.getCamera().position.x = gameController.getPlayer().getB2body().getPosition().x;
-        viewport.getCamera().position.y = GameConfig.WORLD_HEIGHT/2;
+        viewport.getCamera().position.y = GameConfig.WORLD_HEIGHT / 2;
 
         // render debug graphics
         renderDebug(deltaTime);
@@ -186,9 +187,9 @@ public class GameRenderer implements Disposable {
     private void drawCharacters() {
         // draw player
         Player player = gameController.getPlayer();
-        marioGame.getSpriteBatch().draw(playerRegion, player.getX(), player.getY(), player.getWidth(), player.getHeight());
+        marioGame.getSpriteBatch().draw(playerRegion, player.getB2body().getPosition().x - (player.getWidth() / 2), player.getB2body().getPosition().y - (player.getHeight() / 2), player.getWidth(), player.getHeight());
 
-        player.setPosition(player.getB2body().getPosition().x - player.getWidth() / 2, player.getB2body().getPosition().y - player.getHeight() / 2);
+        player.setPosition(player.getB2body().getPosition().x - (player.getWidth() / 2), player.getB2body().getPosition().y - (player.getHeight() / 2));
     }
 
 
