@@ -31,7 +31,7 @@ public class GameController extends InputAdapter implements Disposable {
 
     }
 
-    private static final float IMPULSE_HRTL = 12.0f;
+    private static final float IMPULSE_HRTL = 13.0f;
     private static final float IMPULSE_VRTL = 100.0f;
     public void update(float deltaTime) {
 

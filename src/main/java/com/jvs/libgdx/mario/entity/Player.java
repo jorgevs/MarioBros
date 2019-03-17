@@ -41,7 +41,7 @@ public class Player extends GameObjectBase {
         FixtureDef fixtureDef = new FixtureDef();
         fixtureDef.shape = polygonShape;
         fixtureDef.density = 12.0f;
-        fixtureDef.friction = 0.1f;
+        fixtureDef.friction = 0.15f;
         fixtureDef.restitution = 0.1f; // Make it bounce a little bit
 
         // Create our fixture and attach it to the body
